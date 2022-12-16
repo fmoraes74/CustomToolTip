@@ -351,7 +351,7 @@ public extension NSView
             NSTrackingArea(
                 rect: self.bounds,
                 options:
-                    [.activeInActiveApp, .mouseMoved, .mouseEnteredAndExited],
+                    [.inVisibleRect, .activeAlways, .mouseMoved, .mouseEnteredAndExited],
                 owner: self,
                 userInfo: customToolTipTag
             )
