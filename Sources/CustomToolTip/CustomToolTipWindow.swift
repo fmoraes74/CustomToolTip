@@ -91,6 +91,8 @@ internal final class CustomToolTipWindow: NSWindow
         self.contentView?.isHidden = false
 
         self.backgroundColor = backgroundColor
+     
+        self.level = NSWindow.Level(rawValue: Int(CGWindowLevelForKey(CGWindowLevelKey.floatingWindow)) + 1)
         
         if let mouseLoc = mouseLocation {
             reposition(relativeTo: mouseLoc, inWindowOf: toolTipOwner)
