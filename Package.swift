@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "CustomToolTip",
-    platforms: [.macOS(.v10_14)]
+    platforms: [.macOS(.v10_14)],
     products: [
         .library(
             name: "CustomToolTip",
