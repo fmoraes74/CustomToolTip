@@ -92,7 +92,7 @@ internal final class CustomToolTipWindow: NSWindow
 
         self.backgroundColor = backgroundColor
      
-        self.level = NSWindow.Level(rawValue: Int(CGWindowLevelForKey(CGWindowLevelKey.floatingWindow)) + 1)
+        self.level = NSWindow.Level(rawValue: Int(CGShieldingWindowLevel()) + 1)
         
         if let mouseLoc = mouseLocation {
             reposition(relativeTo: mouseLoc, inWindowOf: toolTipOwner)
