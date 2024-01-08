@@ -401,7 +401,7 @@ public extension NSView
      Schedules potentially showing the tool tip when the `mouseEntered` is
      called.
      */
-    @objc override func mouseEntered(with event: NSEvent)
+    @objc override open func mouseEntered(with event: NSEvent)
     {
         scheduleShowToolTip(
             delay: customToolTipDelay,
@@ -414,7 +414,7 @@ public extension NSView
      Hides the tool tip if it's visible when `mouseExited` is called, cancelling
      further `async` chaining that checks to show it.
      */
-    @objc override func mouseExited(with event: NSEvent)
+    @objc override open func mouseExited(with event: NSEvent)
     {
         hideToolTip(mouseLocation: nil)
     }
@@ -424,7 +424,7 @@ public extension NSView
      Hides the tool tip if it's visible when `mousedMoved` is called, and
      resets the time for it to be displayed again.
      */
-    @objc override func mouseMoved(with event: NSEvent)
+    @objc override open func mouseMoved(with event: NSEvent)
     {
         hideToolTip(mouseLocation: event.locationInWindow)
     }            
