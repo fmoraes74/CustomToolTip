@@ -1,5 +1,4 @@
 import AppKit
-import SwizzleHelper
 
 fileprivate let bundleID = Bundle.main.bundleIdentifier ?? "com.CustomToolTips"
 fileprivate let toolTipKeyTag = bundleID + "CustomToolTips"
@@ -25,8 +24,6 @@ public extension NSView
         get { toolTipControl?.toolTipView }
         set
         {
-            Self.initializeCustomToolTips()
-
             if let newValue = newValue
             {
                 addCustomToolTipTrackingArea()
@@ -52,6 +49,19 @@ public extension NSView
         {
             var control = toolTipControl ?? ToolTipControl(hostView: self)
             control.toolTipMargins = newValue
+            toolTipControl = control
+        }
+    }
+    
+    var customToolTipInsets: CGSize {
+        get
+        {
+            toolTipControl?.toolTipInsets ?? CustomToolTip.defaultInsets
+        }
+        set
+        {
+            var control = toolTipControl ?? ToolTipControl(hostView: self)
+            control.toolTipInsets = newValue
             toolTipControl = control
         }
     }
@@ -233,6 +243,7 @@ public extension NSView
                 toolTipView: toolTipView,
                 for: self,
                 margins: control.toolTipMargins,
+                insets: control.toolTipInsets,
                 backgroundColor: control.toolTipBackgroundColor,
                 mouseLocation: control.mouseLocation
             )
@@ -375,7 +386,7 @@ public extension NSView
      Updates the custom tooltip tracking aread when `updateTrackingAreas` is
      called.
      */
-    @objc private func updateTrackingAreas_CustomToolTip()
+    @objc func updateTrackingAreas_CustomToolTip()
     {
         if let ta = trackingAreaForCustomToolTip
         {
@@ -383,8 +394,6 @@ public extension NSView
             addTrackingArea(ta.updateRect(with: self.bounds))
         }
         else { addCustomToolTipTrackingArea() }
-        
-        callReplacedMethod(for: #selector(self.updateTrackingAreas))
     }
 
     // -------------------------------------
@@ -392,16 +401,11 @@ public extension NSView
      Schedules potentially showing the tool tip when the `mouseEntered` is
      called.
      */
-    @objc private func mouseEntered_CustomToolTip(with event: NSEvent)
+    @objc override func mouseEntered(with event: NSEvent)
     {
         scheduleShowToolTip(
             delay: customToolTipDelay,
             mouseLocation: event.locationInWindow
-        )
-        
-        callReplacedEventMethod(
-            for: #selector(self.mouseEntered(with:)),
-            with: event
         )
     }
     
@@ -410,14 +414,9 @@ public extension NSView
      Hides the tool tip if it's visible when `mouseExited` is called, cancelling
      further `async` chaining that checks to show it.
      */
-    @objc private func mouseExited_CustomToolTip(with event: NSEvent)
+    @objc override func mouseExited(with event: NSEvent)
     {
         hideToolTip(mouseLocation: nil)
-
-        callReplacedEventMethod(
-            for: #selector(self.mouseExited(with:)),
-            with: event
-        )
     }
     
     // -------------------------------------
@@ -425,61 +424,9 @@ public extension NSView
      Hides the tool tip if it's visible when `mousedMoved` is called, and
      resets the time for it to be displayed again.
      */
-    @objc private func mouseMoved_CustomToolTip(with event: NSEvent)
+    @objc override func mouseMoved(with event: NSEvent)
     {
         hideToolTip(mouseLocation: event.locationInWindow)
-        
-        callReplacedEventMethod(
-            for: #selector(self.mouseMoved(with:)),
-            with: event
-        )
-    }
-        
-    // MARK:- Swizzle initialization
-    // -------------------------------------
-    /**
-     Swizzle methods if they have not already been swizzed for the current
-     `NSView` subclass.
-     */
-    static func initializeCustomToolTips() {
-        if !isSwizzled { swizzleCustomToolTipMethods() }
-    }
-    
-    // -------------------------------------
-    /**
-     `true` if the current `NSView` subclass has already been swizzled;
-     otherwise, `false`
-     */
-    private static var isSwizzled: Bool
-    {
-        return nil != Self.implementation(
-            for: #selector(self.mouseMoved(with:))
-        )
-    }
-    
-    // -------------------------------------
-    /**
-     Replace the implementatons of certain methods in the current subclass of
-     `NSView` with custom implementations to implement custom tool tips.
-     */
-    private static func swizzleCustomToolTipMethods()
-    {
-        replaceMethod(
-            #selector(self.updateTrackingAreas),
-            with: #selector(self.updateTrackingAreas_CustomToolTip)
-        )
-        replaceMethod(
-            #selector(self.mouseEntered(with:)),
-            with: #selector(self.mouseEntered_CustomToolTip(with:))
-        )
-        replaceMethod(
-            #selector(self.mouseExited(with:)),
-            with: #selector(self.mouseExited_CustomToolTip(with:))
-        )
-        replaceMethod(
-            #selector(self.mouseMoved(with:)),
-            with: #selector(self.mouseMoved_CustomToolTip(with:))
-        )
-    }
+    }            
  }
 

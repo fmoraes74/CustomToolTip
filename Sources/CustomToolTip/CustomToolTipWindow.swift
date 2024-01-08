@@ -1,6 +1,7 @@
 import AppKit
 
 public var defaultMargins: CGSize = CGSize(width: 5, height: 5)
+public var defaultInsets: CGSize = CGSize(width: 0, height: 0)
 public var defaultBackgroundColor: NSColor = .windowBackgroundColor
 
 // MARK:- Custom Tool Tip Window
@@ -44,6 +45,7 @@ internal final class CustomToolTipWindow: NSWindow
         toolTipView: NSView,
         for owner: NSView,
         margins: CGSize = defaultMargins,
+        insets: CGSize = defaultInsets,
         backgroundColor: NSColor = defaultBackgroundColor,
         mouseLocation: CGPoint? = nil) -> CustomToolTipWindow
     {
@@ -51,6 +53,7 @@ internal final class CustomToolTipWindow: NSWindow
             toolTipView: toolTipView,
             for: owner,
             margins: margins,
+            insets: insets,
             backgroundColor: backgroundColor,
             mouseLocation: mouseLocation
         )
@@ -63,6 +66,7 @@ internal final class CustomToolTipWindow: NSWindow
         toolTipView: NSView,
         for toolTipOwner: NSView,
         margins: CGSize,
+        insets: CGSize,
         backgroundColor: NSColor,
         mouseLocation: CGPoint?)
     {
@@ -95,7 +99,8 @@ internal final class CustomToolTipWindow: NSWindow
         self.level = NSWindow.Level(rawValue: Int(CGShieldingWindowLevel()) + 1)
         
         if let mouseLoc = mouseLocation {
-            reposition(relativeTo: mouseLoc, inWindowOf: toolTipOwner)
+            let mouseLocIns = CGPoint(x: mouseLoc.x + insets.width, y: mouseLoc.y + insets.height)
+            reposition(relativeTo: mouseLocIns, inWindowOf: toolTipOwner)
         }
         else { reposition(relativeTo: toolTipOwner) }
     }

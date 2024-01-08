@@ -42,6 +42,8 @@ internal struct ToolTipControl
      */
     var toolTipMargins: CGSize = CustomToolTip.defaultMargins
     
+    var toolTipInsets: CGSize = CustomToolTip.defaultInsets
+    
     /// Tool tip window's background color
     var toolTipBackgroundColor: NSColor = CustomToolTip.defaultBackgroundColor
     
